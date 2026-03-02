@@ -1,0 +1,32 @@
+:root {
+  /* SWCUI Theme Variables extracted from build/tailwind */
+  --swcui-bg: #0f172a; /* slate-900 */
+  --swcui-fg: #ffffff; /* white */
+  --swcui-border: #1e293b; /* slate-800 approx */
+  --swcui-primary: #0ea5e9; /* brand-500 */
+  --swcui-primary-hover: #0284c7; /* brand-600 */
+  --swcui-primary-fg: #ffffff;
+  --swcui-muted: #64748b; /* slate-500 */
+  --swcui-card: #1e293b; /* slate-800 */
+}
+
+[data-theme="dark"] {
+  --background: var(--swcui-bg);
+  --foreground: var(--swcui-fg);
+  --primary: var(--swcui-primary);
+  --border: var(--swcui-border);
+}
+
+/* Apply to Better Gateway UI elements */
+body.swcui-theme {
+  background-color: var(--swcui-bg) !important;
+  color: var(--swcui-fg) !important;
+}
+
+.swcui-nav-item {
+  color: var(--swcui-muted);
+}
+.swcui-nav-item:hover, .swcui-nav-item.active {
+  color: var(--swcui-primary);
+  background: rgba(14, 165, 233, 0.1);
+}
