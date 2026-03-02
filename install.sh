@@ -24,6 +24,12 @@ if ! command -v pnpm >/dev/null 2>&1; then
   fi
 fi
 
+# Show funding info (informational, not an error)
+if command -v npm >/dev/null 2>&1; then
+  echo "[Install] Package funding info (optional):"
+  npm fund --no-update-notifier || true
+fi
+
 echo "[Install] Installing dependencies"
 pnpm install
 
