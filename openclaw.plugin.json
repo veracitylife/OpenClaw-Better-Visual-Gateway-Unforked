@@ -9,7 +9,7 @@
     "properties": {
       "basePath": {
         "type": "string",
-        "default": "/better-dashboard",
+        "default": "/better-gateway",
         "description": "Mount path for the enhanced dashboard (aliases normalize to this)"
       },
       "swcui": {

@@ -279,7 +279,7 @@ export default function (api: PluginApi) {
       ...(api.pluginConfig?.swcui as any || {})
     }
   };
-  const basePath = (api.pluginConfig?.basePath as string) || "/better-dashboard";
+  const basePath = (api.pluginConfig?.basePath as string) || "/better-gateway";
 
   const fileApiHandler = createFileApiHandler({
     workspaceDir: api.resolvePath("/"),

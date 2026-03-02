@@ -44,4 +44,14 @@ if command -v openclaw >/dev/null 2>&1; then
   sudo systemctl restart openclaw-gateway || true
 fi
 
-echo "[Install] Done. Visit http://localhost:3000/better-gateway"
+# Link hints
+BASE_PATH="${BASE_PATH:-/better-gateway}"
+PORT="$(openclaw config get gateway.port 2>/dev/null || echo 18789)"
+LOCAL_HOST="127.0.0.1"
+TAIL_IP="$(command -v tailscale >/dev/null 2>&1 && tailscale ip -4 | head -n1 || echo "")"
+
+echo "[Install] Done."
+echo "[Install] Local:    http://${LOCAL_HOST}:${PORT}${BASE_PATH}/"
+if [ -n "${TAIL_IP}" ]; then
+  echo "[Install] Tailnet:  http://${TAIL_IP}:${PORT}${BASE_PATH}/"
+fi
