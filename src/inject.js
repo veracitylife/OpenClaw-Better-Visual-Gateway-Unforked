@@ -10,6 +10,7 @@
     autoReconnectOnVisibility: true,
     visibilityReconnectThresholdMs: 30000,
   };
+  const BASE_PATH = (config && config.basePath) ? String(config.basePath) : "/better-dashboard";
 
   let reconnectAttempts = 0;
   let statusIndicator = null;
@@ -277,10 +278,10 @@
   function createIdeFrame() {
     const frame = document.createElement("iframe");
     frame.id = "better-gateway-ide-frame";
-    frame.src = `/better-gateway/ide?v=${encodeURIComponent(INJECT_VERSION)}`;
+    frame.src = `${BASE_PATH}/ide?v=${encodeURIComponent(INJECT_VERSION)}`;
     frame.style.cssText = `
       border: none;
-      background: #1e1e1e;
+      background: #0f172a;
       display: none;
     `;
     return frame;
@@ -289,10 +290,10 @@
   function createCliFrame() {
     const frame = document.createElement("iframe");
     frame.id = "better-gateway-cli-frame";
-    frame.src = `/better-gateway/terminal?v=${encodeURIComponent(INJECT_VERSION)}`;
+    frame.src = `${BASE_PATH}/terminal?v=${encodeURIComponent(INJECT_VERSION)}`;
     frame.style.cssText = `
       border: none;
-      background: #1e1e1e;
+      background: #0f172a;
       display: none;
     `;
     return frame;
@@ -302,7 +303,7 @@
     const frame = document.createElement("iframe");
     frame.id = "better-gateway-swcui-frame";
     // SWCUI is an SPA, serve from /better-gateway/swcui/
-    frame.src = `/better-gateway/swcui/?v=${encodeURIComponent(INJECT_VERSION)}`;
+    frame.src = `${BASE_PATH}/swcui/?v=${encodeURIComponent(INJECT_VERSION)}`;
     frame.style.cssText = `
       border: none;
       background: #0f172a;
@@ -317,16 +318,16 @@
     handle.style.cssText = `
       width: 4px;
       cursor: col-resize;
-      background: #3c3c3c;
+      background: #334155;
       display: none;
       flex-shrink: 0;
     `;
     handle.addEventListener("mouseenter", function() {
-      handle.style.background = "#0078d4";
+      handle.style.background = "#0ea5e9";
     });
     handle.addEventListener("mouseleave", function() {
       if (!handle.dataset.dragging) {
-        handle.style.background = "#3c3c3c";
+        handle.style.background = "#334155";
       }
     });
     return handle;
@@ -343,9 +344,9 @@
       width: 30px;
       height: 30px;
       border-radius: 6px;
-      border: 1px solid #3c3c3c;
-      background: #252526;
-      color: #d4d4d4;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #e2e8f0;
       cursor: pointer;
       z-index: 20;
       display: none;
@@ -354,12 +355,12 @@
       padding: 0;
     `;
     button.addEventListener("mouseenter", function() {
-      button.style.background = "#2d2d2d";
-      button.style.borderColor = "#4f4f4f";
+      button.style.background = "#0f172a";
+      button.style.borderColor = "#0ea5e9";
     });
     button.addEventListener("mouseleave", function() {
-      button.style.background = "#252526";
-      button.style.borderColor = "#3c3c3c";
+      button.style.background = "#1e293b";
+      button.style.borderColor = "#334155";
     });
     button.addEventListener("click", function() {
       if (currentViewMode === "split") {
@@ -487,6 +488,7 @@
     }
 
     const chatNav = document.querySelector('.nav-item[href="/chat"]') 
+      || document.querySelector(`.nav-item[href="${BASE_PATH}/chat"]`)
       || document.querySelector('.nav-item[href="/better-gateway/chat"]');
     const ideNav = document.getElementById("better-gateway-ide-nav");
     const cliNav = document.getElementById("better-gateway-cli-nav");
@@ -757,9 +759,9 @@
 
     // Don't inject on standalone pages (IDE / Terminal)
     if (window.location && (
-      window.location.pathname === "/better-gateway/ide" ||
-      window.location.pathname === "/better-gateway/terminal" ||
-      window.location.pathname === "/better-gateway/swcui"
+      window.location.pathname === `${BASE_PATH}/ide` ||
+      window.location.pathname === `${BASE_PATH}/terminal` ||
+      window.location.pathname === `${BASE_PATH}/swcui`
     )) {
       return false;
     }

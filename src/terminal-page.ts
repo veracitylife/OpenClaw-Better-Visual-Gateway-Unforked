@@ -18,6 +18,7 @@ const DEFAULT_CONFIG: TerminalPageConfig = {
 
 export function generateTerminalPage(
   config: Partial<TerminalPageConfig> = {},
+  basePath: string = "/better-dashboard",
 ): string {
   const { xtermVersion, fitAddonVersion, webLinksAddonVersion } = {
     ...DEFAULT_CONFIG,
@@ -177,9 +178,10 @@ export function generateTerminalPage(
     }
 
     // ---- SSE + POST transport ----
-    var STREAM_URL = '/better-visual-gateway/api/terminals/stream';
-    var INPUT_URL  = '/better-visual-gateway/api/terminals/input';
-    var RESIZE_URL = '/better-visual-gateway/api/terminals/resize';
+    var BASE_PATH = '${basePath}';
+    var STREAM_URL = BASE_PATH + '/api/terminals/stream';
+    var INPUT_URL  = BASE_PATH + '/api/terminals/input';
+    var RESIZE_URL = BASE_PATH + '/api/terminals/resize';
 
     var sid = null;          // session ID from server
     var evtSource = null;    // EventSource instance

@@ -7,6 +7,11 @@
   "configSchema": {
     "type": "object",
     "properties": {
+      "basePath": {
+        "type": "string",
+        "default": "/better-dashboard",
+        "description": "Mount path for the enhanced dashboard (aliases normalize to this)"
+      },
       "swcui": {
         "type": "object",
         "properties": {

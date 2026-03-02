@@ -30,3 +30,43 @@ body.swcui-theme {
   color: var(--swcui-primary);
   background: rgba(14, 165, 233, 0.1);
 }
+
+/* Gateway Control UI light-touch overrides (non-invasive) */
+main.content {
+  background-color: var(--swcui-bg) !important;
+  color: var(--swcui-fg) !important;
+}
+.nav-group__header {
+  color: var(--swcui-muted) !important;
+  border-color: var(--swcui-border) !important;
+}
+.nav-group__items {
+  background-color: var(--swcui-card) !important;
+  border-color: var(--swcui-border) !important;
+}
+.nav-item {
+  color: var(--swcui-fg) !important;
+}
+.nav-item:hover, .nav-item.active {
+  background-color: rgba(14,165,233,0.12) !important;
+  color: var(--swcui-primary) !important;
+}
+.button, button, .btn {
+  background-color: var(--swcui-card) !important;
+  color: var(--swcui-fg) !important;
+  border-color: var(--swcui-border) !important;
+}
+.button:hover, button:hover, .btn:hover {
+  background-color: var(--swcui-border) !important;
+  color: var(--swcui-primary-fg) !important;
+  border-color: var(--swcui-primary) !important;
+}
+.input, input, textarea, select {
+  background-color: var(--swcui-card) !important;
+  color: var(--swcui-fg) !important;
+  border-color: var(--swcui-border) !important;
+}
+.input:focus, input:focus, textarea:focus, select:focus {
+  border-color: var(--swcui-primary) !important;
+  outline: none !important;
+}

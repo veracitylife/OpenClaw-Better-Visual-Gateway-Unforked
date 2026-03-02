@@ -72,15 +72,16 @@ function loadThemeCss(): string {
   return "";
 }
 
-function generateConfigScript(config: PluginConfig): string {
+function generateConfigScript(config: PluginConfig, basePath?: string): string {
   return `window.__BETTER_GATEWAY_CONFIG__ = ${JSON.stringify({
     reconnectIntervalMs: config.reconnectIntervalMs,
     maxReconnectAttempts: config.maxReconnectAttempts,
-    swcui: config.swcui
+    swcui: config.swcui,
+    basePath: basePath || "/better-dashboard"
   })};`;
 }
 
-function generateLandingPage(config: PluginConfig, gatewayHost: string): string {
+function generateLandingPage(config: PluginConfig, gatewayHost: string, basePath: string): string {
   const script = loadInjectScript();
   const bookmarklet = `javascript:(function(){${encodeURIComponent(script.replace(/\n/g, " "))}})()`;
   
@@ -154,7 +155,7 @@ function generateLandingPage(config: PluginConfig, gatewayHost: string): string 
 
   <h2>Skills UI</h2>
   <p>Access the embedded Spun Web Claw UI:</p>
-  <p><a class="bookmarklet" href="/better-visual-gateway/swcui/">👉 Open Skills UI</a></p>
+  <p><a class="bookmarklet" href="${basePath}/swcui/">👉 Open Skills UI</a></p>
 
   <h2>Option 1: Bookmarklet</h2>
   <p>Drag this to your bookmarks bar, then click it when on the Gateway UI:</p>
@@ -162,7 +163,7 @@ function generateLandingPage(config: PluginConfig, gatewayHost: string): string 
   
   <h2>Option 2: Console Injection</h2>
   <p>Open DevTools (F12) on the Gateway UI and paste:</p>
-  <pre>fetch('/better-visual-gateway/inject.js').then(r=>r.text()).then(eval)</pre>
+  <pre>fetch('${basePath}/inject.js').then(r=>r.text()).then(eval)</pre>
   
   <h2>Option 3: Userscript (Tampermonkey)</h2>
   <p>Create a new userscript with:</p>
@@ -172,15 +173,15 @@ function generateLandingPage(config: PluginConfig, gatewayHost: string): string 
 // @grant        none
 // ==/UserScript==
 
-fetch('/better-visual-gateway/inject.js').then(r=>r.text()).then(eval);</pre>
+fetch('${basePath}/inject.js').then(r=>r.text()).then(eval);</pre>
 
   <h2>IDE</h2>
   <p>Full-featured code editor with Monaco:</p>
-  <p><a class="bookmarklet" href="/better-visual-gateway/ide">🚀 Open IDE</a></p>
+  <p><a class="bookmarklet" href="${basePath}/ide">🚀 Open IDE</a></p>
 
   <h2>Terminal</h2>
   <p>Full interactive terminal in the browser:</p>
-  <p><a class="bookmarklet" href="/better-visual-gateway/terminal">🖥 Open Terminal</a></p>
+  <p><a class="bookmarklet" href="${basePath}/terminal">🖥 Open Terminal</a></p>
 
   <hr style="margin: 40px 0; border-color: #333;">
   <p style="color: #666; font-size: 0.85em;">
@@ -278,6 +279,7 @@ export default function (api: PluginApi) {
       ...(api.pluginConfig?.swcui as any || {})
     }
   };
+  const basePath = (api.pluginConfig?.basePath as string) || "/better-dashboard";
 
   const fileApiHandler = createFileApiHandler({
     workspaceDir: api.resolvePath("/"),
@@ -291,22 +293,29 @@ export default function (api: PluginApi) {
     const url = new URL(req.url || "", `http://${req.headers.host}`);
     const path = url.pathname;
 
-    // Normalize path to handle both canonical and alias
+    // Normalize path to handle canonical and aliases
     let normalizedPath = path;
-    if (path.startsWith("/better-gateway/")) {
-      normalizedPath = path.replace("/better-gateway/", "/better-visual-gateway/");
+    if (path === "/better-gateway") {
+      normalizedPath = basePath;
+    } else if (path.startsWith("/better-gateway/")) {
+      normalizedPath = path.replace("/better-gateway/", basePath + "/");
+    }
+    if (path === "/better-visual-gateway") {
+      normalizedPath = basePath;
+    } else if (path.startsWith("/better-visual-gateway/")) {
+      normalizedPath = path.replace("/better-visual-gateway/", basePath + "/");
     }
 
-    if (normalizedPath === "/better-visual-gateway" || normalizedPath === "/better-visual-gateway/") {
+    if (normalizedPath === basePath || normalizedPath === basePath + "/") {
       res.writeHead(200, { "Content-Type": "text/html" });
-      res.end(generateLandingPage(config, `http://${req.headers.host}`));
+      res.end(generateLandingPage(config, `http://${req.headers.host}`, basePath));
       return true;
     }
 
-    if (normalizedPath === "/better-visual-gateway/inject.js") {
+    if (normalizedPath === basePath + "/inject.js") {
       res.writeHead(200, { "Content-Type": "application/javascript", "Cache-Control": "no-cache" });
       const injectScript = loadInjectScript();
-      const configScript = generateConfigScript(config);
+      const configScript = generateConfigScript(config, basePath);
       const themeCss = loadThemeCss();
       // Inject CSS and Config into the script
       const finalScript = `
@@ -323,23 +332,23 @@ export default function (api: PluginApi) {
       return true;
     }
     
-    if (normalizedPath === "/better-visual-gateway/ide") {
+    if (normalizedPath === basePath + "/ide") {
       res.writeHead(200, { "Content-Type": "text/html" });
-      res.end(generateIdePage());
+      res.end(generateIdePage({}, basePath));
       return true;
     }
 
-    if (normalizedPath === "/better-visual-gateway/terminal") {
+    if (normalizedPath === basePath + "/terminal") {
       res.writeHead(200, { "Content-Type": "text/html" });
-      res.end(generateTerminalPage());
+      res.end(generateTerminalPage({}, basePath));
       return true;
     }
 
     // SWCUI Handling
-    if (config.swcui?.enabled && normalizedPath.startsWith("/better-visual-gateway/swcui/")) {
+    if (config.swcui?.enabled && normalizedPath.startsWith(basePath + "/swcui/")) {
       // Proxy API requests
-      if (normalizedPath.startsWith("/better-visual-gateway/swcui/api/")) {
-        const pathSuffix = normalizedPath.replace("/better-visual-gateway/swcui/api/", "");
+      if (normalizedPath.startsWith(basePath + "/swcui/api/")) {
+        const pathSuffix = normalizedPath.replace(basePath + "/swcui/api/", "");
         const targetBaseUrl = config.swcui.mode === "remote" 
           ? config.swcui.remoteApiBaseUrl 
           : config.swcui.localApiBaseUrl;
@@ -355,7 +364,7 @@ export default function (api: PluginApi) {
       }
 
       // Serve Static Files
-      const relativePath = normalizedPath.replace("/better-visual-gateway/swcui/", "");
+      const relativePath = normalizedPath.replace(basePath + "/swcui/", "");
       const swcuiDistPath = join(__dirname, "swcui");
       
       // Try to find the file
@@ -394,12 +403,12 @@ export default function (api: PluginApi) {
     }
 
     // API Handling for Better Gateway features
-    if (normalizedPath.startsWith("/better-visual-gateway/api/")) {
-      if (normalizedPath.startsWith("/better-visual-gateway/api/files")) {
-        return fileApiHandler(req, res, normalizedPath.replace("/better-visual-gateway/api/files", ""));
+    if (normalizedPath.startsWith(basePath + "/api/")) {
+      if (normalizedPath.startsWith(basePath + "/api/files")) {
+        return fileApiHandler(req, res, normalizedPath.replace(basePath + "/api/files", ""));
       }
-      if (normalizedPath.startsWith("/better-visual-gateway/api/terminals")) {
-        return terminalManager.handleRequest(req, res, normalizedPath.replace("/better-visual-gateway/api/terminals", ""));
+      if (normalizedPath.startsWith(basePath + "/api/terminals")) {
+        return terminalManager.handleRequest(req, res, normalizedPath.replace(basePath + "/api/terminals", ""));
       }
     }
 
