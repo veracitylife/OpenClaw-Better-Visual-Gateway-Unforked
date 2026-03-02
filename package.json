@@ -5,10 +5,10 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc && cp src/inject.js dist/inject.js",
-    "deploy": "npm run build && cp -r dist/* ../../../extensions/openclaw-better-gateway/dist/ && cp src/inject.js ../../../extensions/openclaw-better-gateway/dist/inject.js && echo 'Deployed to extensions. Restart gateway to apply.'",
+    "build": "tsc && node -e \"fs=require('fs');p=require('path');fs.mkdirSync(p.join('dist','theme'),{recursive:true});fs.copyFileSync(p.join('src','inject.js'),p.join('dist','inject.js'));fs.copyFileSync(p.join('src','theme','swcui-theme.css'),p.join('dist','theme','swcui-theme.css'))\"",
+    "deploy": "npm run build && node -e \"fs=require('fs');p=require('path');const src='dist';const dst=p.join('..','..','..','extensions','openclaw-better-gateway','dist');fs.mkdirSync(dst,{recursive:true});for(const e of fs.readdirSync(src)){fs.cpSync(p.join(src,e),p.join(dst,e),{recursive:true});}fs.copyFileSync(p.join('src','inject.js'),p.join(dst,'inject.js'));console.log('Deployed to extensions. Restart gateway to apply.')\"",
     "dev": "tsc --watch",
-    "clean": "rm -rf dist",
+    "clean": "node -e \"fs=require('fs');fs.rmSync('dist',{recursive:true,force:true})\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "prepublishOnly": "npm run build",

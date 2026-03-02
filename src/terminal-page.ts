@@ -177,9 +177,9 @@ export function generateTerminalPage(
     }
 
     // ---- SSE + POST transport ----
-    var STREAM_URL = '/better-gateway/terminal/stream';
-    var INPUT_URL  = '/better-gateway/terminal/input';
-    var RESIZE_URL = '/better-gateway/terminal/resize';
+    var STREAM_URL = '/better-visual-gateway/api/terminals/stream';
+    var INPUT_URL  = '/better-visual-gateway/api/terminals/input';
+    var RESIZE_URL = '/better-visual-gateway/api/terminals/resize';
 
     var sid = null;          // session ID from server
     var evtSource = null;    // EventSource instance

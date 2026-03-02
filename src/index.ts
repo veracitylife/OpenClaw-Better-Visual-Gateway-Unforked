@@ -304,7 +304,7 @@ export default function (api: PluginApi) {
     }
 
     if (normalizedPath === "/better-visual-gateway/inject.js") {
-      res.writeHead(200, { "Content-Type": "application/javascript" });
+      res.writeHead(200, { "Content-Type": "application/javascript", "Cache-Control": "no-cache" });
       const injectScript = loadInjectScript();
       const configScript = generateConfigScript(config);
       const themeCss = loadThemeCss();
@@ -369,7 +369,7 @@ export default function (api: PluginApi) {
       }
 
       if (existsSync(filePath) && statSync(filePath).isFile()) {
-        res.writeHead(200, { "Content-Type": getMimeType(filePath) });
+        res.writeHead(200, { "Content-Type": getMimeType(filePath), "Cache-Control": "public, max-age=604800" });
         createReadStream(filePath).pipe(res);
         return true;
       }
@@ -380,7 +380,7 @@ export default function (api: PluginApi) {
       if (!isFileRequest) {
         const indexHtmlPath = join(swcuiDistPath, "index.html");
         if (existsSync(indexHtmlPath)) {
-          res.writeHead(200, { "Content-Type": "text/html" });
+          res.writeHead(200, { "Content-Type": "text/html", "Cache-Control": "no-cache" });
           // We might need to inject base path if SWCUI expects it
           // But assuming SWCUI build is compatible or relative
           createReadStream(indexHtmlPath).pipe(res);
